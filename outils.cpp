@@ -34,25 +34,61 @@ void dilatation(t_Image *image, t_Image *image_contour, ElementStructurant *elem
 
     for (int i = 0; i < im_h; i++) {
         for (int j = 0; j < im_w; j++) {
-
             if (i == 0 && j == 0) {
                 // Coin haut gauche
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
+                   (image->im[i][j+1] == element->valeurs[1][2] && image->im[i][j+1] == 0) ||
+                   (image->im[i+1][j] == element->valeurs[2][1] && image->im[i+1][j] == 0) ||
+                   (image->im[i+1][j+1] == element->valeurs[2][2] && image->im[i+1][j+1] == 0)) {
+                        image_contour->im[i][j] = couleur_contour;
+                   }
 
             } else if (i == 0 && j == (im_w - 1)) {
                 // Coin haut droit
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
+                   (image->im[i+1][j] == element->valeurs[2][1] && image->im[i+1][j] == 0) ||
+                   (image->im[i][j-1] == element->valeurs[1][0] && image->im[i][j-1] == 0) ||
+                   (image->im[i+1][j-1] == element->valeurs[2][0] && image->im[i+1][j-1] == 0)) {
+                        image_contour->im[i][j] = couleur_contour;
+                   }
 
             } else if (i == (im_h - 1) && j == 0) {
                 // Coin bas gauche
-
-                //image->im[i][j] = 0;
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
+                   (image->im[i][j+1] == element->valeurs[1][2] && image->im[i][j+1] == 0) ||
+                   (image->im[i-1][j] == element->valeurs[0][1] && image->im[i-1][j] == 0) ||
+                   (image->im[i-1][j+1] == element->valeurs[0][2] && image->im[i-1][j+1] == 0)) {
+                        image_contour->im[i][j] = couleur_contour;
+                   }
             } else if (i == (im_h - 1) && j == (im_w - 1)) {
                 // Coin bas droit
-
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
+                   (image->im[i][j-1] == element->valeurs[1][0] && image->im[i][j-1] == 0) ||
+                   (image->im[i-1][j] == element->valeurs[0][1] && image->im[i-1][j] == 0) ||
+                   (image->im[i-1][j-1] == element->valeurs[0][0] && image->im[i-1][j-1] == 0)) {
+                        image_contour->im[i][j] = couleur_contour;
+                   }
             }
             else if (i == 0) {
                 // Ligne haut
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
+                    (image->im[i][j+1] == element->valeurs[1][2] && image->im[i][j+1] == 0) ||
+                    (image->im[i+1][j] == element->valeurs[2][1] && image->im[i+1][j] == 0) ||
+                    (image->im[i+1][j+1] == element->valeurs[2][2] && image->im[i+1][j+1] == 0) ||
+                    (image->im[i][j-1] == element->valeurs[1][0] && image->im[i][j-1] == 0) ||
+                    (image->im[i+1][j-1] == element->valeurs[2][0] && image->im[i+1][j-1] == 0)) {
+                        image_contour->im[i][j] = couleur_contour;
+                    }
             } else if (i == (im_h - 1)) {
                 // Ligne bas
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
+                    (image->im[i][j+1] == element->valeurs[1][2] && image->im[i][j+1] == 0) ||
+                    (image->im[i][j-1] == element->valeurs[1][0] && image->im[i][j-1] == 0) ||
+                    (image->im[i-1][j] == element->valeurs[0][1] && image->im[i-1][j] == 0) ||
+                    (image->im[i-1][j-1] == element->valeurs[0][0] && image->im[i-1][j-1] == 0) ||
+                    (image->im[i-1][j+1] == element->valeurs[0][2] && image->im[i-1][j+1] == 0)) {
+                        image_contour->im[i][j] = couleur_contour;
+                    }
 
             } else if (j == 0) {
                 // Ligne gauche
@@ -76,12 +112,12 @@ void dilatation(t_Image *image, t_Image *image_contour, ElementStructurant *elem
                     }
             } else {
                 // Dans l'image
-                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) || // Fonctionne
+                if ((image->im[i][j] == element->valeurs[1][1] && image->im[i][j] == 0) ||
                     (image->im[i][j+1] == element->valeurs[1][2] && image->im[i][j+1] == 0) ||
                     (image->im[i+1][j] == element->valeurs[2][1] && image->im[i+1][j] == 0) ||
                     (image->im[i+1][j+1] == element->valeurs[2][2] && image->im[i+1][j+1] == 0) ||
                     (image->im[i][j-1] == element->valeurs[1][0] && image->im[i][j-1] == 0) ||
-                    (image->im[i-1][j] == element->valeurs[0][1] && image->im[i-1][j] == 0) || // Element (1, 0)
+                    (image->im[i-1][j] == element->valeurs[0][1] && image->im[i-1][j] == 0) ||
                     (image->im[i-1][j-1] == element->valeurs[0][0] && image->im[i-1][j-1] == 0) ||
                     (image->im[i+1][j-1] == element->valeurs[2][0] && image->im[i+1][j-1] == 0) ||
                     (image->im[i-1][j+1] == element->valeurs[0][2] && image->im[i-1][j+1] == 0)) {

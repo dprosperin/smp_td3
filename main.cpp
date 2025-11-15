@@ -32,7 +32,7 @@ int main() {
         .w   = 3,
         .valeurs      = {
                        {255,   0, 255},
-                       {0,   0,    0},
+                       {0,   0, 0},
                        {255,   0, 255}
                       }
     };
@@ -41,20 +41,24 @@ int main() {
     t_Image  image2;
     bool ok2 = false;
 
-    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/croix.pgm", &image2, ok2);
+    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm", &image2, ok2);
 
     t_Image  image_contour = {
-        5,
-        5,
-        {{255, 255, 255, 255, 255}, {255, 255, 255, 255, 255}, {255, 255, 255, 255, 255}, {255, 255, 255, 255, 255}, {255, 255, 255, 255, 255}}
+        image2.w,
+        image2.h,
+        {}
     };
+
+    for (int i = 0; i < image_contour.h; i++)
+        for (int j = 0; j < image_contour.w; j++)
+            image_contour.im[i][j] = 255;
 
     dilatation(&image2, &image_contour, &element1);
 
-    string sortieFichier2 = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/croixDilatation.pgm";
-    savePgm(sortieFichier2, &image2);
+    //string sortieFichier2 = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm";
+    //savePgm(sortieFichier2, &image2);
 
-    string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/croixDilatationContour.pgm";
+    string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20Contour.pgm";
     savePgm(sortieFichierContour, &image_contour);
 
     return 0;
