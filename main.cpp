@@ -53,7 +53,7 @@ int main() {
         for (int j = 0; j < image_contour.w; j++)
             image_contour.im[i][j] = 255;
 
-    dilatation(&image2, &image_contour, &element1);
+    dilatation(&image2, &image_contour, &element1, 99);
 
     //string sortieFichier2 = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm";
     //savePgm(sortieFichier2, &image2);
