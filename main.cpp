@@ -6,18 +6,16 @@
 using namespace std;
 
 int main() {
-    // TODO: Plus de 3 structures ça plante
-    /*
-    t_Image  image;
+    auto image_kodie512x512 = createImage();
     bool ok = false;
 
     int seuil = 25;
 
-    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512.pgm", &image, ok);
+    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512.pgm", image_kodie512x512, ok);
     cout << ok << endl;
 
     if (ok) {
-        seuillage(&image, seuil);
+        seuillage(image_kodie512x512, seuil);
     }
 
     cout << "=== Binarisation de l'image  ===" << endl;
@@ -25,8 +23,10 @@ int main() {
                      + to_string(seuil)
                      + ".pgm";
 
-    savePgm(sortieFichier, &image);*/
+    savePgm(sortieFichier, image_kodie512x512);
+    delete image_kodie512x512;
 
+    cout << "=== Dilatation ===" << endl;
 
     auto element1 = createElement(3, 3);
 
@@ -41,7 +41,6 @@ int main() {
     element1->valeurs[1][0] = 0;
     element1->valeurs[1][2] = 0;
 
-    cout << "=== Dilatation ===" << endl;
     auto image2 = createImage();
     bool ok2 = false;
 
@@ -50,9 +49,6 @@ int main() {
     auto image_contour = createImage(image2->h, image2->w);
 
     dilatation(image2, image_contour, element1, 99);
-
-    //string sortieFichier2 = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm";
-    //savePgm(sortieFichier2, &image2);
 
     string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20Contour.pgm";
     savePgm(sortieFichierContour, image_contour);
