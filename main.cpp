@@ -38,14 +38,14 @@ int main() {
     };
 
     cout << "=== Dilatation ===" << endl;
-    t_Image  image2;
+    auto image2 = createImageFilledBy();
     bool ok2 = false;
 
-    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm", &image2, ok2);
+    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm", image2, ok2);
 
     t_Image  image_contour = {
-        image2.w,
-        image2.h,
+        image2->w,
+        image2->h,
         {}
     };
 
@@ -53,13 +53,15 @@ int main() {
         for (int j = 0; j < image_contour.w; j++)
             image_contour.im[i][j] = 255;
 
-    dilatation(&image2, &image_contour, &element1, 99);
+    dilatation(image2, &image_contour, &element1, 99);
 
     //string sortieFichier2 = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm";
     //savePgm(sortieFichier2, &image2);
 
     string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20Contour.pgm";
     savePgm(sortieFichierContour, &image_contour);
+
+    delete image2;
 
     return 0;
 }

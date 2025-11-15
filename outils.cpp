@@ -135,3 +135,19 @@ void dilatation(const t_Image *image_entree, t_Image *image_sortie, const Elemen
     }
 }
 
+t_Image * createImageFilledBy(const unsigned int h, const unsigned int w, const unsigned int couleur_fond) {
+    assert(h <= TMAX && "Les hauteurs des images doivent être <= 800");
+    assert(w <= TMAX && "Les largeurs des images doivent être <= 800");
+    assert(couleur_fond <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+
+    auto image = new t_Image();
+
+    image->h = h;
+    image->w = w;
+
+    for (int i = 0; i < image->h; i++)
+        for (int j = 0; j < image->w; j++)
+            image->im[i][j] = couleur_fond;
+
+    return image;
+}
