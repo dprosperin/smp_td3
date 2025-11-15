@@ -20,7 +20,7 @@ void seuillage(t_Image *image, const unsigned int s) {
     }
 }
 
-void dilatation(const t_Image *image_entree, t_Image *image_sortie, const ElementStructurant *element, const unsigned int couleur_remplissage) {
+void dilatation(const t_Image *image_entree, t_Image *image_sortie, const t_ElementStructurant *element, const unsigned int couleur_remplissage) {
     const int im_w = image_entree->w;
     const int im_h = image_entree->h;
 
@@ -135,7 +135,7 @@ void dilatation(const t_Image *image_entree, t_Image *image_sortie, const Elemen
     }
 }
 
-t_Image * createImageFilledBy(const unsigned int h, const unsigned int w, const unsigned int couleur_fond) {
+t_Image * createImage(const unsigned int h, const unsigned int w, const unsigned int couleur_fond) {
     assert(h <= TMAX && "Les hauteurs des images doivent être <= 800");
     assert(w <= TMAX && "Les largeurs des images doivent être <= 800");
     assert(couleur_fond <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
@@ -150,4 +150,25 @@ t_Image * createImageFilledBy(const unsigned int h, const unsigned int w, const 
             image->im[i][j] = couleur_fond;
 
     return image;
+}
+
+t_ElementStructurant * createElement(const unsigned int h, const unsigned int w, const unsigned int centreX,
+    const unsigned int centreY, const unsigned int couleur_fond) {
+    assert(h <= TMAX && "Les hauteurs des images doivent être <= 800");
+    assert(w <= TMAX && "Les largeurs des images doivent être <= 800");
+    assert(couleur_fond <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+    assert(centreY < h && "L'ordonnée du centre doit être < à la hauteur de l'élément structurant");
+    assert(centreX < w && "L'abscisse du centre doit être < à la largeur de l'élément structurant");
+
+    auto element_structurant = new t_ElementStructurant();
+    element_structurant->h = h;
+    element_structurant->w = w;
+    element_structurant->centreX = centreX;
+    element_structurant->centreY = centreY;
+
+    for (int i = 0; i < element_structurant->h; i++)
+        for (int j = 0; j < element_structurant->w; j++)
+            element_structurant->valeurs[i][j] = couleur_fond;
+
+    return element_structurant;
 }

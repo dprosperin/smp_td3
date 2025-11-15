@@ -27,40 +27,38 @@ int main() {
 
     savePgm(sortieFichier, &image);*/
 
-    ElementStructurant element1 = {
-        .h  = 3,
-        .w   = 3,
-        .valeurs      = {
-                       {255,   0, 255},
-                       {0,   0, 0},
-                       {255,   0, 255}
-                      }
-    };
+
+    auto element1 = createElement(3, 3);
+
+    /* Motif de l'element structurant:
+        255,   0, 255
+        0,     0,   0
+        255,   0, 255
+    */
+    element1->valeurs[0][1] = 0;
+    element1->valeurs[1][1] = 0;
+    element1->valeurs[2][1] = 0;
+    element1->valeurs[1][0] = 0;
+    element1->valeurs[1][2] = 0;
 
     cout << "=== Dilatation ===" << endl;
-    auto image2 = createImageFilledBy();
+    auto image2 = createImage();
     bool ok2 = false;
 
     loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm", image2, ok2);
 
-    t_Image  image_contour = {
-        image2->w,
-        image2->h,
-        {}
-    };
+    auto image_contour = createImage(image2->h, image2->w);
 
-    for (int i = 0; i < image_contour.h; i++)
-        for (int j = 0; j < image_contour.w; j++)
-            image_contour.im[i][j] = 255;
-
-    dilatation(image2, &image_contour, &element1, 99);
+    dilatation(image2, image_contour, element1, 99);
 
     //string sortieFichier2 = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20.pgm";
     //savePgm(sortieFichier2, &image2);
 
     string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20Contour.pgm";
-    savePgm(sortieFichierContour, &image_contour);
+    savePgm(sortieFichierContour, image_contour);
 
+    delete element1;
+    delete image_contour;
     delete image2;
 
     return 0;
