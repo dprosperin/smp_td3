@@ -174,17 +174,17 @@ void dilatation(const t_Image *image_entree, t_Image *image_sortie, const t_Elem
                     }
             } else {
                 // Dans l'image
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                    (image_entree->im[i][j+1] == element->valeurs[1][2] && image_entree->im[i][j+1] == 0) ||
-                    (image_entree->im[i+1][j] == element->valeurs[2][1] && image_entree->im[i+1][j] == 0) ||
-                    (image_entree->im[i+1][j+1] == element->valeurs[2][2] && image_entree->im[i+1][j+1] == 0) ||
-                    (image_entree->im[i][j-1] == element->valeurs[1][0] && image_entree->im[i][j-1] == 0) ||
-                    (image_entree->im[i-1][j] == element->valeurs[0][1] && image_entree->im[i-1][j] == 0) ||
-                    (image_entree->im[i-1][j-1] == element->valeurs[0][0] && image_entree->im[i-1][j-1] == 0) ||
-                    (image_entree->im[i+1][j-1] == element->valeurs[2][0] && image_entree->im[i+1][j-1] == 0) ||
-                    (image_entree->im[i-1][j+1] == element->valeurs[0][2] && image_entree->im[i-1][j+1] == 0)) {
-                            image_sortie->im[i][j] = couleur_remplissage;
+                bool chevauchement = false;
+                for (int el_y = 0; el_y < el_h && !chevauchement; el_y++) {
+                    for (int el_x = 0; el_x < el_w && !chevauchement; el_x++) {
+                        const unsigned int pixel = image_entree->im[i + el_y - element->centreY][j + el_x - element->centreX],
+                                            el   = element->valeurs[el_y][el_x];
+                        if (pixel == el && pixel == 0)
+                            chevauchement = true;
                     }
+                }
+                if (chevauchement)
+                    image_sortie->im[i][j] = couleur_remplissage;
             }
         }
     }

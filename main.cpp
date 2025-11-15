@@ -6,6 +6,7 @@
 using namespace std;
 
 int main() {
+    cout << "=== Binarisation de l'image  ===" << endl;
     auto image_kodie512x512 = createImage();
     bool ok = false;
 
@@ -18,7 +19,6 @@ int main() {
         seuillage(image_kodie512x512, seuil);
     }
 
-    cout << "=== Binarisation de l'image  ===" << endl;
     string sortieFichier = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil"
                      + to_string(seuil)
                      + ".pgm";
@@ -50,7 +50,7 @@ int main() {
 
     dilatation(image2, image_contour, element1, 99);
 
-    string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20Contour.pgm";
+    string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20ContourVariable.pgm";
     savePgm(sortieFichierContour, image_contour);
 
     delete element1;
