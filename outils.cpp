@@ -93,99 +93,26 @@ void dilatation(const t_Image *image_entree, t_Image *image_sortie, const t_Elem
     assert(el_h % 2 == 1 && "La taille de l'élément structurant doit être impaire.");
     assert(couleur_remplissage <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
 
-
     for (int i = 0; i < im_h; i++) {
         for (int j = 0; j < im_w; j++) {
-            if (i == 0 && j == 0) {
-                // Coin haut gauche
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                   (image_entree->im[i][j+1] == element->valeurs[1][2] && image_entree->im[i][j+1] == 0) ||
-                   (image_entree->im[i+1][j] == element->valeurs[2][1] && image_entree->im[i+1][j] == 0) ||
-                   (image_entree->im[i+1][j+1] == element->valeurs[2][2] && image_entree->im[i+1][j+1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                   }
+            bool chevauchement = false;
+            for (int el_y = 0; el_y < el_h && !chevauchement; el_y++) {
+                for (int el_x = 0; el_x < el_w && !chevauchement; el_x++) {
+                    const int pixel_x = j + el_x - element->centreX,
+                            pixel_y = i + el_y - element->centreY;
 
-            } else if (i == 0 && j == (im_w - 1)) {
-                // Coin haut droit
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                   (image_entree->im[i+1][j] == element->valeurs[2][1] && image_entree->im[i+1][j] == 0) ||
-                   (image_entree->im[i][j-1] == element->valeurs[1][0] && image_entree->im[i][j-1] == 0) ||
-                   (image_entree->im[i+1][j-1] == element->valeurs[2][0] && image_entree->im[i+1][j-1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                   }
+                    if (pixel_x >= 0 && pixel_x < im_w &&
+                        pixel_y >= 0 && pixel_y < im_h) {
+                        const unsigned int pixel = image_entree->im[pixel_y][pixel_x],
+                                el = element->valeurs[el_y][el_x];
 
-            } else if (i == (im_h - 1) && j == 0) {
-                // Coin bas gauche
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                   (image_entree->im[i][j+1] == element->valeurs[1][2] && image_entree->im[i][j+1] == 0) ||
-                   (image_entree->im[i-1][j] == element->valeurs[0][1] && image_entree->im[i-1][j] == 0) ||
-                   (image_entree->im[i-1][j+1] == element->valeurs[0][2] && image_entree->im[i-1][j+1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                   }
-            } else if (i == (im_h - 1) && j == (im_w - 1)) {
-                // Coin bas droit
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                   (image_entree->im[i][j-1] == element->valeurs[1][0] && image_entree->im[i][j-1] == 0) ||
-                   (image_entree->im[i-1][j] == element->valeurs[0][1] && image_entree->im[i-1][j] == 0) ||
-                   (image_entree->im[i-1][j-1] == element->valeurs[0][0] && image_entree->im[i-1][j-1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                   }
-            }
-            else if (i == 0) {
-                // Ligne haut
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                    (image_entree->im[i][j+1] == element->valeurs[1][2] && image_entree->im[i][j+1] == 0) ||
-                    (image_entree->im[i+1][j] == element->valeurs[2][1] && image_entree->im[i+1][j] == 0) ||
-                    (image_entree->im[i+1][j+1] == element->valeurs[2][2] && image_entree->im[i+1][j+1] == 0) ||
-                    (image_entree->im[i][j-1] == element->valeurs[1][0] && image_entree->im[i][j-1] == 0) ||
-                    (image_entree->im[i+1][j-1] == element->valeurs[2][0] && image_entree->im[i+1][j-1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                    }
-            } else if (i == (im_h - 1)) {
-                // Ligne bas
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                    (image_entree->im[i][j+1] == element->valeurs[1][2] && image_entree->im[i][j+1] == 0) ||
-                    (image_entree->im[i][j-1] == element->valeurs[1][0] && image_entree->im[i][j-1] == 0) ||
-                    (image_entree->im[i-1][j] == element->valeurs[0][1] && image_entree->im[i-1][j] == 0) ||
-                    (image_entree->im[i-1][j-1] == element->valeurs[0][0] && image_entree->im[i-1][j-1] == 0) ||
-                    (image_entree->im[i-1][j+1] == element->valeurs[0][2] && image_entree->im[i-1][j+1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                    }
-
-            } else if (j == 0) {
-                // Ligne gauche
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                    (image_entree->im[i][j+1] == element->valeurs[1][2] && image_entree->im[i][j+1] == 0) ||
-                    (image_entree->im[i+1][j] == element->valeurs[2][1] && image_entree->im[i+1][j] == 0) ||
-                    (image_entree->im[i+1][j+1] == element->valeurs[2][2] && image_entree->im[i+1][j+1] == 0) ||
-                    (image_entree->im[i-1][j] == element->valeurs[0][1] && image_entree->im[i-1][j] == 0) ||
-                    (image_entree->im[i-1][j+1] == element->valeurs[0][2] && image_entree->im[i-1][j+1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                    }
-            } else if (j == (im_w - 1)) {
-                //Ligne droit
-                if ((image_entree->im[i][j] == element->valeurs[1][1] && image_entree->im[i][j] == 0) ||
-                    (image_entree->im[i+1][j] == element->valeurs[2][1] && image_entree->im[i+1][j] == 0) ||
-                    (image_entree->im[i][j-1] == element->valeurs[1][0] && image_entree->im[i][j-1] == 0) ||
-                    (image_entree->im[i-1][j] == element->valeurs[0][1] && image_entree->im[i-1][j] == 0) ||
-                    (image_entree->im[i-1][j-1] == element->valeurs[0][0] && image_entree->im[i-1][j-1] == 0) ||
-                    (image_entree->im[i+1][j-1] == element->valeurs[2][0] && image_entree->im[i+1][j-1] == 0)) {
-                        image_sortie->im[i][j] = couleur_remplissage;
-                    }
-            } else {
-                // Dans l'image
-                bool chevauchement = false;
-                for (int el_y = 0; el_y < el_h && !chevauchement; el_y++) {
-                    for (int el_x = 0; el_x < el_w && !chevauchement; el_x++) {
-                        const unsigned int pixel = image_entree->im[i + el_y - element->centreY][j + el_x - element->centreX],
-                                            el   = element->valeurs[el_y][el_x];
                         if (pixel == el && pixel == 0)
                             chevauchement = true;
                     }
                 }
-                if (chevauchement)
-                    image_sortie->im[i][j] = couleur_remplissage;
             }
+            if (chevauchement)
+                image_sortie->im[i][j] = couleur_remplissage;
         }
     }
 }
