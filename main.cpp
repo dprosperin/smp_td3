@@ -103,12 +103,22 @@ int main() {
     savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil50ouverture3x3.pgm",
             image_kodie_ouverture3x3);
 
+    cout << "=== Fermeture élément structurant 3x3 ===" << endl;
+
+    auto image_kodie_fermeture3x3 = createImage(image_kodie_seuil50->h, image_kodie_seuil50->w);
+
+    fermeture(image_kodie_seuil50, image_kodie_fermeture3x3, element3x3, BLACK);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil50fermeture3x3.pgm",
+            image_kodie_fermeture3x3);
+
     delete element3x3;
     delete image_contour;
     delete image_kodie_seuil50;
     delete element5x5;
     delete image_kodie_erosion3x3;
     delete image_kodie_ouverture3x3;
+    delete image_kodie_fermeture3x3;
 
     return 0;
 }

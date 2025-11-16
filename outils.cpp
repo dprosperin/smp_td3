@@ -261,6 +261,33 @@ void ouverture(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant
     delete imgEroded;
 }
 
+void fermeture(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, unsigned int fillColor = BLACK) {
+    const int imgInWidth = imgIn->w;
+    const int imgInHeight = imgIn->h;
+
+    const int elementWidth = element->w;
+    const int elementHeight = element->h;
+
+    const int imgOutWidth = imgOut->w;
+    const int imgOutHeight = imgOut->h;
+
+    assert(imgOutWidth == imgInWidth && "La largeur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight == imgInHeight && "La hauteur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight <= TMAX && "Les hauteurs des images doivent être <= 800");
+    assert(imgOutWidth <= TMAX && "Les largeurs des images doivent être <= 800");
+    assert(elementHeight == elementWidth && "L'élément structurant doit être carrée.");
+    assert(elementHeight % 2 == 1 && "La taille de l'élément structurant doit être impaire.");
+    assert(fillColor <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+
+    auto imgDilated = createImage(imgIn->h, imgIn->w, WHITE);
+
+    dilatation(imgIn, imgDilated, element, fillColor);
+
+    erosion(imgDilated, imgOut, element, fillColor);
+
+    delete imgDilated;
+}
+
 
 /**
  * @brief Crée et initialise dynamiquement une image.
