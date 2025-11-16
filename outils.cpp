@@ -421,3 +421,99 @@ t_ElementStructurant * createElement(const unsigned int h, const unsigned int w,
 
     return element_structurant;
 }
+
+/**
+ * @brief Calcule la différence absolue entre deux images pixel par pixel.
+ *
+ * Cette fonction réalise une opération de comparaison entre deux images en
+ * calculant pour chaque pixel (i, j) la valeur absolue de la différence entre
+ * les niveaux de gris correspondants dans les deux images d'entrée.
+ *
+ * Lorsque les deux images possèdent les mêmes dimensions, la différence est
+ * calculée directement sur l'ensemble des pixels.
+ *
+ * Si les images ont des tailles différentes, la sortie adopte comme dimensions
+ * la largeur maximale et la hauteur maximale des deux images. Dans les zones
+ * où une seule image possède un pixel (l'autre étant plus petite), la différence
+ * est calculée par rapport à la valeur 0, ce qui revient à recopier l’intensité
+ * du pixel existant.
+ *
+ * Cette opération permet notamment :
+ * - de mettre en évidence les changements entre deux images,
+ * - d'extraire des contours ou des variations,
+ * - de détecter des mouvements ou différences d’intensité.
+ *
+ * @param img1   Pointeur vers la première image d'entrée.
+ * @param img2   Pointeur vers la seconde image d'entrée.
+ * @param sortie Pointeur vers l'image de sortie dans laquelle sera stocké le résultat.
+ *               Doit être préalablement allouée. Ses dimensions seront modifiées
+ *               en fonction des images d'entrée.
+ *
+ * @pre img1 != nullptr
+ * @pre img2 != nullptr
+ * @pre sortie != nullptr
+ *
+ * @post sortie->w = max(img1->w, img2->w)
+ * @post sortie->h = max(img1->h, img2->h)
+ *
+ * @note L'image d'entrée la plus grande détermine les dimensions de l'image de sortie
+ *       si les images ont des tailles différentes.
+ * @note La fonction n'utilise pas d'opérations de seuillage : la différence peut varier
+ *       entre 0 et 255 si les images sont de type 8 bits.
+ */
+
+void difference(const t_Image* img1, const t_Image* img2, t_Image* sortie) {
+    //Teste si les deux images sont de même taille
+    if ((img1->w == img2->w) && (img1->h == img2->h)){
+        //Initialisation des dimensions de l'image
+        sortie->w = img1->w;
+        sortie->h = img1->h;
+        //Double boucle pour calculer la différence en valeur absolue
+        for (int i = 0 ; i < (img1->w) ; i++){
+            for (int j = 0 ; j < (img1->h) ; j++){
+                sortie->im[i][j] = abs((int)img1->im[i][j]-(int)img2->im[i][j]);
+            }
+        }
+    }
+    else{
+        //Définition des objets servant à déterminer les dimensions de l'image de sortie
+        const t_Image* maxi_w;
+        const t_Image* maxi_h;
+        const t_Image* mini_w;
+        const t_Image* mini_h;
+        //Tests pour déterminer les dimensions de l'image de sortie
+        if (img1->w>img2->w){
+            maxi_w = img1;
+            mini_w = img2;
+        }
+        else {
+            maxi_w = img2;
+            mini_w = img1;
+        }
+        if (img1->h>img2->h){
+            maxi_h = img1;
+            mini_h = img2;
+        }
+        else{
+            maxi_h = img2;
+            mini_h = img1;
+        }
+        //Attribution de la taille de l'image de sortie
+        sortie->w = maxi_w->w;
+        sortie->h = maxi_h->h;
+        //Double boucle qui permet de faire le calcul des différences en valeur absolue
+        for (int i=0 ; i<maxi_w->w ; i++){
+            for (int j=0 ; j<maxi_h->h ; j++){
+                if (i < mini_w->w && j< mini_h->h){
+                    sortie->im[i][j]=abs((int)img1->im[i][j]-(int)img2->im[i][j]);
+                }
+                else if (i < maxi_w->w){
+                    sortie->im[i][j]=abs((int)maxi_w->im[i][j]-0);
+                }
+                else{
+                    sortie->im[i][j]=abs((int)maxi_h->im[i][j]-0);
+                }
+            }
+        }
+    }
+}

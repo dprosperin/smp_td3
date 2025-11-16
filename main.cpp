@@ -112,6 +112,29 @@ int main() {
     savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil50fermeture3x3.pgm",
             image_kodie_fermeture3x3);
 
+    cout << "=== Différence : monarch512x512 - lena512x512 ===" << endl;
+
+    auto image_monarch = createImage();
+    bool monarch_loaded = false;
+
+    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/monarch512x512.pgm", image_monarch, monarch_loaded);
+
+    assert(monarch_loaded && "Erreur lors du chargement de l'image monarch512x512.pgm");
+
+    auto image_lena = createImage();
+    bool lena_loaded = false;
+
+    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/lena512x512.pgm", image_lena, lena_loaded);
+
+    assert(lena_loaded && "Erreur lors du chargement de l'image lena512x512.pgm");
+
+    auto diff_monarch_lena = createImage();
+
+    difference(image_monarch, image_lena, diff_monarch_lena);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/diff_monarch_lena.pgm", diff_monarch_lena);
+
+
     delete element3x3;
     delete image_contour;
     delete image_kodie_seuil50;
@@ -119,6 +142,7 @@ int main() {
     delete image_kodie_erosion3x3;
     delete image_kodie_ouverture3x3;
     delete image_kodie_fermeture3x3;
+    delete image_monarch;
 
     return 0;
 }
