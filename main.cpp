@@ -134,6 +134,51 @@ int main() {
 
     savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/diff_monarch_lena.pgm", diff_monarch_lena);
 
+    cout << "=== Difference : plane512x512 seuillé à 100 - plane512x512 apres ouverture 3x3 ===" << endl;
+
+    auto image_plane = createImage();
+    bool plane_loaded = false;
+
+    loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/plane512x512.pgm", image_plane, plane_loaded);
+
+    assert(plane_loaded && "Erreur lors du chargement de l'image plane512x512.pgm");
+
+    seuil = 100;
+
+    seuillage(image_plane, seuil);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/plane512x512seuil100.pgm", image_plane);
+
+    auto image_plane_ouverture3x3 = createImage(image_plane->h, image_plane->w);
+
+    ouverture(image_plane, image_plane_ouverture3x3, element3x3, BLACK);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/plane512x512seuil100ouverture3x3.pgm",
+            image_plane_ouverture3x3);
+
+    auto diff_seuil100_ouverture3x3 = createImage(image_plane->h, image_plane->w);
+
+    difference(image_plane, image_plane_ouverture3x3, diff_seuil100_ouverture3x3);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/plane512x512_diff_seuil100_seuil100ouverture3x3.pgm",
+            diff_seuil100_ouverture3x3);
+
+    cout << "=== Difference : plane512x512 seuillé à 100 - plane512x512 apres fermeture 3x3 ===" << endl;
+
+    auto image_plane_fermeture3x3 = createImage(image_plane->h, image_plane->w);
+
+    fermeture(image_plane, image_plane_fermeture3x3, element3x3, BLACK);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/plane512x512seuil100fermeture3x3.pgm",
+            image_plane_fermeture3x3);
+
+    auto diff_seuil100_fermeture3x3 = createImage(image_plane->h, image_plane->w);
+
+    difference(image_plane, image_plane_fermeture3x3, diff_seuil100_fermeture3x3);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/plane512x512_diff_seuil100_seuil100fermeture3x3.pgm",
+            diff_seuil100_fermeture3x3);
+
 
     delete element3x3;
     delete image_contour;
@@ -143,6 +188,10 @@ int main() {
     delete image_kodie_ouverture3x3;
     delete image_kodie_fermeture3x3;
     delete image_monarch;
+    delete image_plane;
+    delete diff_seuil100_ouverture3x3;
+    delete image_plane_fermeture3x3;
+    delete diff_seuil100_fermeture3x3;
 
     return 0;
 }
