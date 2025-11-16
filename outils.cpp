@@ -118,6 +118,85 @@ void dilatation(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructuran
 }
 
 /**
+ * @brief Applique une opération d'érosion morphologique sur une image binaire.
+ *
+ * L'érosion est une opération de morphologie mathématique permettant de réduire
+ * la taille des objets présents dans une image. Pour chaque position de l'élément
+ * structurant déplacé sur l'image d'entrée, le pixel correspondant au centre de
+ * l'élément structurant dans l'image de sortie n'est conservé (rempli par
+ * @p fillColor) que si l'ensemble de l'élément structurant est entièrement contenu
+ * dans la forme de l'image. Autrement dit, si une seule cellule active de
+ * l'élément structurant chevauche un pixel de fond (valeur 0) dans l'image
+ * d'entrée, le pixel central est supprimé dans l'image érodée.
+ *
+ * Cette opération a pour effet :
+ * - de "rétrécir" les objets,
+ * - d'éliminer de petits détails ou protubérances,
+ * - de séparer des objets faiblement connectés,
+ * - de filtrer le bruit isolé.
+ *
+ * @param imgIn   Pointeur vers l'image d'entrée, non modifiée par la fonction.
+ * @param imgOut  Pointeur vers l'image de sortie, préalablement allouée et de même
+ *                dimensions que l'image d'entrée.
+ * @param element Pointeur vers l'élément structurant (doit être carré et de taille impaire).
+ * @param fillColor Valeur du pixel utilisée lorsque l'érosion conserve un point (0 à 255).
+ *
+ * @pre imgOut->w == imgIn->w
+ * @pre imgOut->h == imgIn->h
+ * @pre imgOut->w <= TMAX
+ * @pre imgOut->h <= TMAX
+ * @pre element->w == element->h
+ * @pre element->w % 2 == 1
+ * @pre 0 <= fillColor <= 255
+ *
+ * @note L'image d'entrée n'est jamais modifiée. L'image de sortie doit être
+ *       allouée avant l'appel. Seuls les pixels répondant strictement au critère
+ *       d'érosion sont définis dans imgOut ; les autres doivent être initialisés
+ *       par l'appelant si nécessaire.
+ */
+void erosion(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, unsigned int fillColor) {
+    const int imgInWidth = imgIn->w;
+    const int imgInHeight = imgIn->h;
+
+    const int elementWidth = element->w;
+    const int elementHeight = element->h;
+
+    const int imgOutWidth = imgOut->w;
+    const int imgOutHeight = imgOut->h;
+
+    assert(imgOutWidth == imgInWidth && "La largeur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight == imgInHeight && "La hauteur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight <= TMAX && "Les hauteurs des images doivent être <= 800");
+    assert(imgOutWidth <= TMAX && "Les largeurs des images doivent être <= 800");
+    assert(elementHeight == elementWidth && "L'élément structurant doit être carrée.");
+    assert(elementHeight % 2 == 1 && "La taille de l'élément structurant doit être impaire.");
+    assert(fillColor <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+
+    for (int imgY = 0; imgY < imgInHeight; imgY++) {
+        for (int imgX = 0; imgX < imgInWidth; imgX++) {
+            bool overlap = true;
+            for (int elementY = 0; elementY < elementHeight && overlap; elementY++) {
+                for (int elementX = 0; elementX < elementWidth && overlap; elementX++) {
+                    const int pixelX = imgX + elementX - element->centreX,
+                            pixelY = imgY + elementY - element->centreY;
+
+                    if (pixelX >= 0 && pixelX < imgInWidth &&
+                        pixelY >= 0 && pixelY < imgInHeight) {
+                        const unsigned int pixel = imgIn->im[pixelY][pixelX],
+                                           el = element->valeurs[elementY][elementX];
+
+                        if (el == BLACK)
+                            overlap = (pixel == BLACK);
+                        }
+                }
+            }
+            if (overlap)
+                imgOut->im[imgY][imgX] = fillColor;
+        }
+    }
+}
+
+/**
  * @brief Crée et initialise dynamiquement une image.
  *
  * Cette fonction alloue une nouvelle structure `t_Image` sur le tas et initialise

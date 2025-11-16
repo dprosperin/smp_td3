@@ -11,7 +11,7 @@ int main() {
     auto image_kodie = createImage();
     bool ok = false;
 
-    int seuil = 25;
+    int seuil = 50;
 
     loadPgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512.pgm", image_kodie, ok);
     cout << ok << endl;
@@ -38,24 +38,24 @@ int main() {
 
     cout << "=== Dilatation ===" << endl;
 
-    auto element1 = createElement(3, 3);
+    auto element3x3 = createElement(3, 3);
 
     /* Motif de l'element structurant:
         255,   0, 255
         0,     0,   0
         255,   0, 255
     */
-    element1->valeurs[0][1] = BLACK;
-    element1->valeurs[1][1] = BLACK;
-    element1->valeurs[2][1] = BLACK;
-    element1->valeurs[1][0] = BLACK;
-    element1->valeurs[1][2] = BLACK;
+    element3x3->valeurs[0][1] = BLACK;
+    element3x3->valeurs[1][1] = BLACK;
+    element3x3->valeurs[2][1] = BLACK;
+    element3x3->valeurs[1][0] = BLACK;
+    element3x3->valeurs[1][2] = BLACK;
 
     auto image_contour = createImage(image_kodie_seuil50->h, image_kodie_seuil50->w);
 
-    dilatation(image_kodie_seuil50, image_contour, element1, BLACK);
+    dilatation(image_kodie_seuil50, image_contour, element3x3, BLACK);
 
-    string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20ContourVariable2.pgm";
+    string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil50dilatation3x3.pgm";
     savePgm(sortieFichierContour, image_contour);
 
     cout << "==== Dilatation avec un élément structurant de taille 5x5 ==== " << endl;
@@ -82,14 +82,23 @@ int main() {
     element5x5->valeurs[2][3] = BLACK;
     element5x5->valeurs[2][4] = BLACK;
 
-    dilatation(image_kodie, image_kodie_dilatation5x5, element5x5, BLACK);
+    dilatation(image_kodie_seuil50, image_kodie_dilatation5x5, element5x5, BLACK);
 
-    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20dilatation5x5.pgm", image_kodie_dilatation5x5);
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil50dilatation5x5.pgm", image_kodie_dilatation5x5);
 
-    delete element1;
+    cout << "=== Erosion élément structurant 3x3 ===" << endl;
+
+    auto image_kodie_erosion3x3 = createImage(image_kodie_seuil50->h, image_kodie_seuil50->w);
+
+    erosion(image_kodie_seuil50, image_kodie_erosion3x3, element3x3, BLACK);
+
+    savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil50erosion3x3.pgm", image_kodie_erosion3x3);
+
+    delete element3x3;
     delete image_contour;
     delete image_kodie_seuil50;
     delete element5x5;
+    delete image_kodie_erosion3x3;
 
     return 0;
 }
