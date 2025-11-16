@@ -197,6 +197,72 @@ void erosion(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *
 }
 
 /**
+ * @brief Réalise une ouverture morphologique sur une image binaire.
+ *
+ * L’ouverture est une opération de morphologie mathématique composée d’une
+ * érosion suivie d’une dilatation avec le même élément structurant.
+ * Cette opération permet de supprimer le bruit, d’éliminer de petites
+ * irrégularités ou objets isolés, tout en conservant la forme générale
+ * des structures plus grandes.
+ *
+ * Concrètement :
+ * - L’érosion réduit les objets et supprime les détails isolés.
+ * - La dilatation qui suit restaure approximativement la taille des objets,
+ *   mais sans réintroduire les petites imperfections supprimées.
+ *
+ * L’ouverture est particulièrement utile pour filtrer les artefacts
+ * de petite taille tout en préservant la géométrie des objets principaux.
+ *
+ * @param imgIn   Pointeur vers l'image d'entrée (non modifiée).
+ * @param imgOut  Pointeur vers l'image de sortie qui contiendra le résultat.
+ *                Doit être de mêmes dimensions que @p imgIn.
+ * @param element Pointeur vers l'élément structurant utilisé pour l’ouverture.
+ *                Doit être carré et de taille impaire.
+ * @param fillColor Valeur utilisée pour remplir les pixels conservés
+ *                  lors de l'érosion et de la dilatation (0 à 255).
+ *                  Par défaut : @c BLACK.
+ *
+ * @pre imgOut->w == imgIn->w
+ * @pre imgOut->h == imgIn->h
+ * @pre imgOut->w <= TMAX
+ * @pre imgOut->h <= TMAX
+ * @pre element->w == element->h
+ * @pre element->w % 2 == 1
+ * @pre 0 <= fillColor <= 255
+ *
+ * @note Une image temporaire est allouée pour stocker le résultat de l’érosion.
+ *       Cette image est libérée automatiquement avant la fin de la fonction.
+ * @note L’image d’entrée n’est jamais modifiée.
+ */
+void ouverture(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, unsigned int fillColor = BLACK) {
+    const int imgInWidth = imgIn->w;
+    const int imgInHeight = imgIn->h;
+
+    const int elementWidth = element->w;
+    const int elementHeight = element->h;
+
+    const int imgOutWidth = imgOut->w;
+    const int imgOutHeight = imgOut->h;
+
+    assert(imgOutWidth == imgInWidth && "La largeur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight == imgInHeight && "La hauteur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight <= TMAX && "Les hauteurs des images doivent être <= 800");
+    assert(imgOutWidth <= TMAX && "Les largeurs des images doivent être <= 800");
+    assert(elementHeight == elementWidth && "L'élément structurant doit être carrée.");
+    assert(elementHeight % 2 == 1 && "La taille de l'élément structurant doit être impaire.");
+    assert(fillColor <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+
+    auto imgEroded = createImage(imgIn->h, imgIn->w, WHITE);
+
+    erosion(imgIn, imgEroded, element, fillColor);
+
+    dilatation(imgEroded, imgOut, element, fillColor);
+
+    delete imgEroded;
+}
+
+
+/**
  * @brief Crée et initialise dynamiquement une image.
  *
  * Cette fonction alloue une nouvelle structure `t_Image` sur le tas et initialise
