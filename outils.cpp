@@ -75,7 +75,7 @@ void seuillage(t_Image *image, const unsigned int s) {
  * @note L'image d'entrée n'est pas modifiée. L'image de sortie doit être préalablement
  *       allouée et de même taille que l'image d'entrée.
  */
-void dilatation(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, const unsigned int fillColor) {
+void dilatation(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, const unsigned int fillColor = BLACK) {
     const int imgInWidth = imgIn->w;
     const int imgInHeight = imgIn->h;
 
@@ -154,7 +154,7 @@ void dilatation(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructuran
  *       d'érosion sont définis dans imgOut ; les autres doivent être initialisés
  *       par l'appelant si nécessaire.
  */
-void erosion(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, unsigned int fillColor) {
+void erosion(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, unsigned int fillColor = BLACK) {
     const int imgInWidth = imgIn->w;
     const int imgInHeight = imgIn->h;
 
