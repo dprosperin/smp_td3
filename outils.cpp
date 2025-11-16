@@ -261,6 +261,47 @@ void ouverture(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant
     delete imgEroded;
 }
 
+/**
+ * @brief Réalise une fermeture morphologique sur une image binaire.
+ *
+ * La fermeture est une opération de morphologie mathématique composée d’une
+ * dilatation suivie d’une érosion utilisant le même élément structurant.
+ * Contrairement à l’ouverture, la fermeture permet de combler de petits trous
+ * dans les objets, de lisser leurs contours et de connecter des régions
+ * proches.
+ *
+ * Concrètement :
+ * - La dilatation étend les objets et fusionne les zones proches.
+ * - L’érosion suivante rétablit approximativement la forme initiale, tout en
+ *   conservant les modifications utiles (comblement, lissage, connexions).
+ *
+ * La fermeture est particulièrement efficace pour :
+ * - combler des cavités ou trous internes,
+ * - lisser les irrégularités,
+ * - consolider des structures fragmentées,
+ * - réduire les discontinuités dans les objets.
+ *
+ * @param imgIn   Pointeur vers l'image d'entrée (non modifiée).
+ * @param imgOut  Pointeur vers l'image de sortie, préalablement allouée, qui
+ *                recevra le résultat final. Doit avoir les mêmes dimensions que @p imgIn.
+ * @param element Pointeur vers l'élément structurant utilisé pour la fermeture.
+ *                Il doit être carré et de taille impaire.
+ * @param fillColor Valeur utilisée lors de la dilatation et de l’érosion pour
+ *                  remplir les pixels actifs (comprise entre 0 et 255).
+ *                  Par défaut : @c BLACK.
+ *
+ * @pre imgOut->w == imgIn->w
+ * @pre imgOut->h == imgIn->h
+ * @pre imgOut->w <= TMAX
+ * @pre imgOut->h <= TMAX
+ * @pre element->w == element->h
+ * @pre element->w % 2 == 1
+ * @pre 0 <= fillColor <= 255
+ *
+ * @note Une image temporaire est allouée pour stocker le résultat de la
+ *       dilatation intermédiaire, puis libérée avant la fin de la fonction.
+ * @note L’image d’entrée n’est jamais modifiée.
+ */
 void fermeture(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, unsigned int fillColor = BLACK) {
     const int imgInWidth = imgIn->w;
     const int imgInHeight = imgIn->h;
