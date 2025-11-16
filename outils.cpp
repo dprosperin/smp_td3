@@ -52,12 +52,12 @@ void seuillage(t_Image *image, const unsigned int s) {
  * - élargir les formes,
  * - connecter des éléments proches.
  *
- * @param image_entree Pointeur vers l'image d'entrée (const) ne devant pas être modifiée.
- * @param image_sortie Pointeur vers l'image de sortie qui recevra le résultat.
+ * @param imgIn Pointeur vers l'image d'entrée (const) ne devant pas être modifiée.
+ * @param imgOut Pointeur vers l'image de sortie qui recevra le résultat.
  *                     Doit avoir les mêmes dimensions que @p image_entree.
  * @param element Pointeur vers l'élément structurant utilisé pour la dilatation.
  *                Doit être carré et de taille impaire.
- * @param couleur_remplissage Valeur du pixel utilisé pour "allumer" les positions
+ * @param fillColor Valeur du pixel utilisé pour "allumer" les positions
  *                            correspondantes dans l'image de sortie. Doit être
  *                            comprise entre 0 et 255 inclus.
  *
@@ -75,44 +75,44 @@ void seuillage(t_Image *image, const unsigned int s) {
  * @note L'image d'entrée n'est pas modifiée. L'image de sortie doit être préalablement
  *       allouée et de même taille que l'image d'entrée.
  */
-void dilatation(const t_Image *image_entree, t_Image *image_sortie, const t_ElementStructurant *element, const unsigned int couleur_remplissage) {
-    const int im_w = image_entree->w;
-    const int im_h = image_entree->h;
+void dilatation(const t_Image *imgIn, t_Image *imgOut, const t_ElementStructurant *element, const unsigned int fillColor) {
+    const int imgInWidth = imgIn->w;
+    const int imgInHeight = imgIn->h;
 
-    const int el_w = element->w;
-    const int el_h = element->h;
+    const int elementWidth = element->w;
+    const int elementHeight = element->h;
 
-    const int image_sortie_w = image_sortie->w;
-    const int image_sortie_h = image_sortie->h;
+    const int imgOutWidth = imgOut->w;
+    const int imgOutHeight = imgOut->h;
 
-    assert(image_sortie_w == im_w && "La largeur de l'image d'entrée et de sortie doivent être égale.");
-    assert(image_sortie_h == im_h && "La hauteur de l'image d'entrée et de sortie doivent être égale.");
-    assert(image_sortie_h <= TMAX && "Les hauteurs des images doivent être <= 800");
-    assert(image_sortie_w <= TMAX && "Les largeurs des images doivent être <= 800");
-    assert(el_h == el_w && "L'élément structurant doit être carrée.");
-    assert(el_h % 2 == 1 && "La taille de l'élément structurant doit être impaire.");
-    assert(couleur_remplissage <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+    assert(imgOutWidth == imgInWidth && "La largeur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight == imgInHeight && "La hauteur de l'image d'entrée et de sortie doivent être égale.");
+    assert(imgOutHeight <= TMAX && "Les hauteurs des images doivent être <= 800");
+    assert(imgOutWidth <= TMAX && "Les largeurs des images doivent être <= 800");
+    assert(elementHeight == elementWidth && "L'élément structurant doit être carrée.");
+    assert(elementHeight % 2 == 1 && "La taille de l'élément structurant doit être impaire.");
+    assert(fillColor <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
 
-    for (int i = 0; i < im_h; i++) {
-        for (int j = 0; j < im_w; j++) {
-            bool chevauchement = false;
-            for (int el_y = 0; el_y < el_h && !chevauchement; el_y++) {
-                for (int el_x = 0; el_x < el_w && !chevauchement; el_x++) {
-                    const int pixel_x = j + el_x - element->centreX,
-                            pixel_y = i + el_y - element->centreY;
+    for (int imgY = 0; imgY < imgInHeight; imgY++) {
+        for (int imgX = 0; imgX < imgInWidth; imgX++) {
+            bool overlap = false;
+            for (int elementY = 0; elementY < elementHeight && !overlap; elementY++) {
+                for (int elementX = 0; elementX < elementWidth && !overlap; elementX++) {
+                    const int pixelX = imgX + elementX - element->centreX,
+                            pixelY = imgY + elementY - element->centreY;
 
-                    if (pixel_x >= 0 && pixel_x < im_w &&
-                        pixel_y >= 0 && pixel_y < im_h) {
-                        const unsigned int pixel = image_entree->im[pixel_y][pixel_x],
-                                el = element->valeurs[el_y][el_x];
+                    if (pixelX >= 0 && pixelX < imgInWidth &&
+                        pixelY >= 0 && pixelY < imgInHeight) {
+                        const unsigned int pixel = imgIn->im[pixelY][pixelX],
+                                           el = element->valeurs[elementY][elementX];
 
-                        if (pixel == el && pixel == 0)
-                            chevauchement = true;
+                        if (pixel == el && pixel == BLACK)
+                            overlap = true;
                     }
                 }
             }
-            if (chevauchement)
-                image_sortie->im[i][j] = couleur_remplissage;
+            if (overlap)
+                imgOut->im[imgY][imgX] = fillColor;
         }
     }
 }
@@ -126,7 +126,7 @@ void dilatation(const t_Image *image_entree, t_Image *image_sortie, const t_Elem
  *
  * @param h Hauteur de l'image à créer. Doit être inférieure ou égale à TMAX.
  * @param w Largeur de l'image à créer. Doit être inférieure ou égale à TMAX.
- * @param couleur_fond Valeur du pixel de fond pour initialiser l'image.
+ * @param backgroundColor Valeur du pixel de fond pour initialiser l'image.
  *                     Doit être comprise entre 0 et 255 inclus.
  *
  * @return Pointeur vers l'image nouvellement créée et initialisée.
@@ -140,10 +140,10 @@ void dilatation(const t_Image *image_entree, t_Image *image_sortie, const t_Elem
  * @note Tous les pixels de l'image sont initialisés à @p couleur_fond.
  * @note La mémoire pour la structure et le tableau interne est allouée sur le tas.
  */
-t_Image * createImage(const unsigned int h, const unsigned int w, const unsigned int couleur_fond) {
+t_Image * createImage(const unsigned int h, const unsigned int w, const unsigned int backgroundColor) {
     assert(h <= TMAX && "Les hauteurs des images doivent être <= 800");
     assert(w <= TMAX && "Les largeurs des images doivent être <= 800");
-    assert(couleur_fond <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+    assert(backgroundColor <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
 
     auto image = new t_Image();
 
@@ -152,7 +152,7 @@ t_Image * createImage(const unsigned int h, const unsigned int w, const unsigned
 
     for (int i = 0; i < image->h; i++)
         for (int j = 0; j < image->w; j++)
-            image->im[i][j] = couleur_fond;
+            image->im[i][j] = backgroundColor;
 
     return image;
 }
@@ -172,7 +172,7 @@ t_Image * createImage(const unsigned int h, const unsigned int w, const unsigned
  * @param w Largeur de l’élément structurant. Doit être inférieure ou égale à TMAX.
  * @param centreX Position du centre sur l’axe horizontal (0 <= centreX < w).
  * @param centreY Position du centre sur l’axe vertical   (0 <= centreY < h).
- * @param couleur_fond Valeur utilisée pour initialiser l’ensemble des cellules
+ * @param backgroundColor Valeur utilisée pour initialiser l’ensemble des cellules
  *                     de l’élément structurant. Doit être comprise entre 0 et 255.
  *
  * @return Pointeur vers l’élément structurant nouvellement créé.
@@ -189,10 +189,10 @@ t_Image * createImage(const unsigned int h, const unsigned int w, const unsigned
  * @note L’appelant est responsable de la libération de la mémoire avec `delete`.
  */
 t_ElementStructurant * createElement(const unsigned int h, const unsigned int w, const unsigned int centreX,
-    const unsigned int centreY, const unsigned int couleur_fond) {
+    const unsigned int centreY, const unsigned int backgroundColor) {
     assert(h <= TMAX && "Les hauteurs des images doivent être <= 800");
     assert(w <= TMAX && "Les largeurs des images doivent être <= 800");
-    assert(couleur_fond <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
+    assert(backgroundColor <= 255  && "La valeur de la couleur de remplissage doit respecter : 0 <= s <= 255");
     assert(centreY < h && "L'ordonnée du centre doit être < à la hauteur de l'élément structurant");
     assert(centreX < w && "L'abscisse du centre doit être < à la largeur de l'élément structurant");
 
@@ -204,7 +204,7 @@ t_ElementStructurant * createElement(const unsigned int h, const unsigned int w,
 
     for (int i = 0; i < element_structurant->h; i++)
         for (int j = 0; j < element_structurant->w; j++)
-            element_structurant->valeurs[i][j] = couleur_fond;
+            element_structurant->valeurs[i][j] = backgroundColor;
 
     return element_structurant;
 }

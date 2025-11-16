@@ -45,15 +45,15 @@ int main() {
         0,     0,   0
         255,   0, 255
     */
-    element1->valeurs[0][1] = 0;
-    element1->valeurs[1][1] = 0;
-    element1->valeurs[2][1] = 0;
-    element1->valeurs[1][0] = 0;
-    element1->valeurs[1][2] = 0;
+    element1->valeurs[0][1] = BLACK;
+    element1->valeurs[1][1] = BLACK;
+    element1->valeurs[2][1] = BLACK;
+    element1->valeurs[1][0] = BLACK;
+    element1->valeurs[1][2] = BLACK;
 
     auto image_contour = createImage(image_kodie_seuil50->h, image_kodie_seuil50->w);
 
-    dilatation(image_kodie_seuil50, image_contour, element1, 0);
+    dilatation(image_kodie_seuil50, image_contour, element1, BLACK);
 
     string sortieFichierContour = "/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20ContourVariable2.pgm";
     savePgm(sortieFichierContour, image_contour);
@@ -71,18 +71,18 @@ int main() {
         255,   255,   0,   255,   255,
     */
 
-    element5x5->valeurs[0][2] = 0;
-    element5x5->valeurs[1][2] = 0;
-    element5x5->valeurs[2][2] = 0;
-    element5x5->valeurs[3][2] = 0;
-    element5x5->valeurs[4][2] = 0;
+    element5x5->valeurs[0][2] = BLACK;
+    element5x5->valeurs[1][2] = BLACK;
+    element5x5->valeurs[2][2] = BLACK;
+    element5x5->valeurs[3][2] = BLACK;
+    element5x5->valeurs[4][2] = BLACK;
 
-    element5x5->valeurs[2][0] = 0;
-    element5x5->valeurs[2][1] = 0;
-    element5x5->valeurs[2][3] = 0;
-    element5x5->valeurs[2][4] = 0;
+    element5x5->valeurs[2][0] = BLACK;
+    element5x5->valeurs[2][1] = BLACK;
+    element5x5->valeurs[2][3] = BLACK;
+    element5x5->valeurs[2][4] = BLACK;
 
-    dilatation(image_kodie, image_kodie_dilatation5x5, element5x5, 0);
+    dilatation(image_kodie, image_kodie_dilatation5x5, element5x5, BLACK);
 
     savePgm("/Users/davidprosperin/CLionProjects/smp_tp3/tp3-images/kodie512x512seuil20dilatation5x5.pgm", image_kodie_dilatation5x5);
 
